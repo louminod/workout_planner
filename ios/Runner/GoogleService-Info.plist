@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1083942361968-mbbs70ci9n2nq5g4cl7n1qkf4hviamje.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1083942361968-mbbs70ci9n2nq5g4cl7n1qkf4hviamje</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBNcNBdI2ZMMHkLR_1QgN5_x3SloNd0VpM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1083942361968</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>workoutplanner.workoutPlanner</string>
+	<key>PROJECT_ID</key>
+	<string>workout-planner-a7e48</string>
+	<key>STORAGE_BUCKET</key>
+	<string>workout-planner-a7e48.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1083942361968:ios:09017caf8e49afa7858db5</string>
+	<key>DATABASE_URL</key>
+	<string>https://workout-planner-a7e48.firebaseio.com</string>
+</dict>
+</plist>

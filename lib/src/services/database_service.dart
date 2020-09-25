@@ -39,4 +39,10 @@ class DatabaseService {
           return Workout.fromJson(doc.id, doc.data());
         }
       }).toList());
+
+  Future<void> insertWorkout(Workout workout) => _workoutsCollection.doc(workout.uid).set(workout.toJson());
+
+  Future<void> updateWorkout(Workout workout) => _workoutsCollection.doc(workout.uid).update(workout.toJson());
+
+  Future<void> deleteWorkout(Workout workout) => _workoutsCollection.doc(workout.uid).delete();
 }

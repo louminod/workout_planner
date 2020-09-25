@@ -68,12 +68,6 @@ class CustomDrawer extends StatelessWidget {
               Navigator.pushReplacementNamed(context, PageRoutes.workout);
             },
           ),
-          ListTile(
-            title: Text('RUNNING'),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, PageRoutes.running);
-            },
-          ),
         ],
       ),
     );

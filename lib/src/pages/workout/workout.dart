@@ -5,9 +5,11 @@ import 'package:timeline_list/timeline.dart';
 import 'package:timeline_list/timeline_model.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
 import 'package:workout_planner/src/models/workout.dart';
+import 'package:workout_planner/src/pages/connection/connection.dart';
+import 'package:workout_planner/src/pages/workout/references/workoutState.dart';
 import 'package:workout_planner/src/pages/workout/workoutCreate.dart';
-import 'package:workout_planner/src/references/workoutState.dart';
 import 'package:workout_planner/src/services/database_service.dart';
+import 'package:workout_planner/src/tools/converters.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
 
 class WorkoutPage extends StatelessWidget {
@@ -17,12 +19,8 @@ class WorkoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var user = Provider.of<FullUser>(context);
 
-    List<Workout> userWorkouts = [];
-
-    final List<TimelineModel> items = [
-      workoutCard("cardio", "12 septembre 2020", 14, 3, ["RUN", "CROSSFIT", "BIKE", "STRETCH"], WorkoutStatus.FINISHED, 100),
-      workoutCard("legs", "17 septembre 2020", 7, 4, ["RUN", "MUSCU", "COURSES"], WorkoutStatus.CREATED, 60),
-    ];
+    List<Workout> userWorkouts;
+    List<TimelineModel> items;
 
     return Scaffold(
       drawer: CustomDrawer(),
@@ -37,7 +35,12 @@ class WorkoutPage extends StatelessWidget {
               stream: DatabaseService(userUid: user.userFirebase.uid).userWorkouts,
               builder: (context, AsyncSnapshot<List<Workout>> userWorkoutsSnapshot) {
                 if (userWorkoutsSnapshot.hasData) {
+                  userWorkouts = [];
                   userWorkouts = userWorkoutsSnapshot.data;
+                  items = [];
+                  userWorkouts.forEach((workout) {
+                    items.add(workoutCard(workout));
+                  });
                   return userWorkouts.length > 0
                       ? Container(
                           margin: EdgeInsets.only(top: 10, left: 15),
@@ -52,7 +55,7 @@ class WorkoutPage extends StatelessWidget {
                         );
                 } else if (userWorkoutsSnapshot.hasError) {
                   return Center(
-                    child: Text(userWorkoutsSnapshot.error),
+                    child: Text(userWorkoutsSnapshot.error.toString()),
                   );
                 } else {
                   return Center(
@@ -62,27 +65,44 @@ class WorkoutPage extends StatelessWidget {
               },
             )
           : Center(
-              child: Text("Please login to show your workouts"),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Please "),
+                  RaisedButton(
+                    child: Text("Login", style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ConnectionPage()),
+                      );
+                    },
+                    color: Colors.black,
+                  ),
+                  Text(" to show or create workouts."),
+                ],
+              ),
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => WorkoutCreatePage()),
-          );
-        },
-        label: Text('Create'),
-        icon: Icon(Icons.add),
-        backgroundColor: Colors.black,
-      ),
+      floatingActionButton: user != null
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WorkoutCreatePage(user: user)),
+                );
+              },
+              label: Text('Create'),
+              icon: Icon(Icons.add),
+              backgroundColor: Colors.black,
+            )
+          : null,
     );
   }
 
-  TimelineModel workoutCard(
-      String title, String date, int nbExercises, int nbSeries, List<String> categories, WorkoutStatus status, int completedPercent) {
+  TimelineModel workoutCard(Workout workout) {
     Icon statusIcon;
 
-    switch (status) {
+    switch (workout.status) {
       case WorkoutStatus.CREATED:
         statusIcon = Icon(Icons.assistant, color: Colors.cyan);
         break;
@@ -101,8 +121,8 @@ class WorkoutPage extends StatelessWidget {
         child: Column(
           children: [
             ListTile(
-              title: Text(title.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text(date, style: TextStyle(color: Colors.grey)),
+              title: Text(workout.name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(Converters.dateTimeToString(workout.date), style: TextStyle(color: Colors.grey)),
             ),
             Divider(),
             Align(
@@ -115,9 +135,9 @@ class WorkoutPage extends StatelessWidget {
                   child: ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
+                    itemCount: workout.categories.length,
                     itemBuilder: (context, index) {
-                      return categoryItem(categories[index]);
+                      return categoryItem(workout.categories[index].toString().split(".")[1]);
                     },
                   ),
                 ),
@@ -132,8 +152,8 @@ class WorkoutPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("15:00", style: TextStyle(fontSize: 17, color: Colors.grey)),
-                  Text("$nbExercises exercices", style: TextStyle(fontSize: 17, color: Colors.grey)),
-                  Text("$nbSeries séries", style: TextStyle(fontSize: 17, color: Colors.grey)),
+                  Text("${workout.nbExercises} exercices", style: TextStyle(fontSize: 17, color: Colors.grey)),
+                  Text("${workout.nbSeries} séries", style: TextStyle(fontSize: 17, color: Colors.grey)),
                 ],
               ),
             ),
@@ -144,10 +164,10 @@ class WorkoutPage extends StatelessWidget {
                 animation: true,
                 lineHeight: 20.0,
                 animationDuration: 1000,
-                percent: completedPercent / 100,
-                center: Text("$completedPercent.0%", style: TextStyle(color: Colors.white)),
+                percent: workout.statusPercent / 100,
+                center: Text("${workout.statusPercent}.0%", style: TextStyle(color: Colors.white)),
                 linearStrokeCap: LinearStrokeCap.roundAll,
-                progressColor: completedPercent == 100 ? Colors.greenAccent : Colors.black,
+                progressColor: workout.statusPercent == 100 ? Colors.greenAccent : Colors.black,
               ),
             ),
             ButtonBar(
@@ -156,8 +176,8 @@ class WorkoutPage extends StatelessWidget {
                 RaisedButton(
                   color: Colors.black,
                   elevation: 3,
-                  child: completedPercent == 0 ? Text("RUN") : completedPercent == 100 ? Text("FINISHED") : Text("CONTINUE"),
-                  onPressed: completedPercent == 100 ? null : () {},
+                  child: workout.statusPercent == 0 ? Text("RUN") : workout.statusPercent == 100 ? Text("FINISHED") : Text("CONTINUE"),
+                  onPressed: workout.statusPercent == 100 ? null : () {},
                 )
               ],
             ),

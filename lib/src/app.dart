@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:workout_planner/src/pages/connection/connection.dart';
 import 'package:workout_planner/src/pages/home.dart';
 import 'package:workout_planner/src/pages/profile.dart';
-import 'package:workout_planner/src/pages/running.dart';
 import 'package:workout_planner/src/pages/workout/workout.dart';
 import 'package:workout_planner/src/routes/pageRoutes.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';
@@ -59,10 +58,6 @@ class _AppState extends State<App> {
         PageRoutes.workout: (context) => StreamProvider<FullUser>.value(
               value: DatabaseService(userUid: userUid).fullUser,
               child: WorkoutPage(),
-            ),
-        PageRoutes.running: (context) => StreamProvider<FullUser>.value(
-              value: DatabaseService(userUid: userUid).fullUser,
-              child: RunningPage(),
             ),
         PageRoutes.profile: (context) => StreamProvider<FullUser>.value(
               value: DatabaseService(userUid: userUid).fullUser,

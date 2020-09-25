@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:timeline_list/timeline.dart';
 import 'package:timeline_list/timeline_model.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
+import 'package:workout_planner/src/models/workout.dart';
 import 'package:workout_planner/src/pages/workout/workoutCreate.dart';
 import 'package:workout_planner/src/references/workoutState.dart';
+import 'package:workout_planner/src/services/database_service.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
 
 class WorkoutPage extends StatelessWidget {
@@ -14,6 +16,8 @@ class WorkoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var user = Provider.of<FullUser>(context);
+
+    List<Workout> userWorkouts = [];
 
     final List<TimelineModel> items = [
       workoutCard("cardio", "12 septembre 2020", 14, 3, ["RUN", "CROSSFIT", "BIKE", "STRETCH"], WorkoutStatus.FINISHED, 100),
@@ -25,17 +29,41 @@ class WorkoutPage extends StatelessWidget {
       appBar: new AppBar(
         iconTheme: new IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
-        title: Text("WORKOUT PLANS", style: TextStyle(color: Colors.grey)),
+        title: Text("MY WORKOUTS", style: TextStyle(color: Colors.grey)),
         centerTitle: true,
       ),
-      body: Container(
-        margin: EdgeInsets.only(top: 10, left: 15),
-        padding: EdgeInsets.only(bottom: 40),
-        child: Timeline(
-          children: items,
-          position: TimelinePosition.Left,
-        ),
-      ),
+      body: user != null
+          ? StreamBuilder(
+              stream: DatabaseService(userUid: user.userFirebase.uid).userWorkouts,
+              builder: (context, AsyncSnapshot<List<Workout>> userWorkoutsSnapshot) {
+                if (userWorkoutsSnapshot.hasData) {
+                  userWorkouts = userWorkoutsSnapshot.data;
+                  return userWorkouts.length > 0
+                      ? Container(
+                          margin: EdgeInsets.only(top: 10, left: 15),
+                          padding: EdgeInsets.only(bottom: 40),
+                          child: Timeline(
+                            children: items,
+                            position: TimelinePosition.Left,
+                          ),
+                        )
+                      : Center(
+                          child: Text("No workouts created yet"),
+                        );
+                } else if (userWorkoutsSnapshot.hasError) {
+                  return Center(
+                    child: Text(userWorkoutsSnapshot.error),
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            )
+          : Center(
+              child: Text("Please login to show your workouts"),
+            ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(

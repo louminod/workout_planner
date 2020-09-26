@@ -17,6 +17,7 @@ class DatabaseService {
     if (this.userUid != "") {
       return AuthenticationService().userFirebase.asyncExpand((u) => _userData.map((uData) => FullUser(userFirebase: u, userData: uData)));
     }
+    return null;
   }
 
   Stream<UserData> get _userData => _usersDataCollection.doc(userUid).snapshots().map((DocumentSnapshot userData) {

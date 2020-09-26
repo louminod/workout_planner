@@ -1,6 +1,6 @@
 import 'package:workout_planner/src/pages/connection/connection.dart';
 import 'package:workout_planner/src/pages/home.dart';
-import 'package:workout_planner/src/pages/profile.dart';
+import 'file:///C:/Users/louis/Documents/Developpement/FLUTTER/Workspace/workout_planner/lib/src/pages/profile/profile.dart';
 import 'package:workout_planner/src/pages/workout/workout.dart';
 
 class PageRoutes {

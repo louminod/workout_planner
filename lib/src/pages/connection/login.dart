@@ -1,8 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
-import 'package:workout_planner/src/routes/pageRoutes.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';
 
 import '../../app.dart';
@@ -35,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   TextFormField(
                     decoration: const InputDecoration(
-                      icon: Icon(Icons.alternate_email),
                       hintText: 'Your mail address.',
                       labelText: 'Email',
                     ),
@@ -48,13 +44,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextFormField(
                     decoration: const InputDecoration(
-                      icon: Icon(Icons.vpn_key),
                       hintText: 'Your password',
                       labelText: 'Password',
                     ),
                     obscureText: true,
                     validator: (String value) {
-                      return value.length == 0 && value == "" ? 'The password is empty' : null;
+                      return value.length == 0 && value == ""
+                          ? 'The password is empty'
+                          : null;
                     },
                     onChanged: (val) {
                       setState(() => password = val);
@@ -72,7 +69,9 @@ class _LoginPageState extends State<LoginPage> {
                           loading = true;
                         });
 
-                        dynamic result = await AuthenticationService().signInWithEmailAndPassword(email.replaceAll(' ', ''), password);
+                        dynamic result = await AuthenticationService()
+                            .signInWithEmailAndPassword(
+                                email.replaceAll(' ', ''), password);
 
                         if (result is FullUser) {
                           setState(() {

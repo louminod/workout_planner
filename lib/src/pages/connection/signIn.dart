@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';
@@ -30,7 +29,6 @@ class _SignInPageState extends State<SignInPage> {
           children: [
             TextFormField(
               decoration: const InputDecoration(
-                icon: Icon(Icons.alternate_email),
                 hintText: 'Your mail address.',
                 labelText: 'Email',
               ),
@@ -43,7 +41,6 @@ class _SignInPageState extends State<SignInPage> {
             ),
             TextFormField(
               decoration: const InputDecoration(
-                icon: Icon(Icons.vpn_key),
                 hintText: 'Your password',
                 labelText: 'Password',
               ),
@@ -57,7 +54,6 @@ class _SignInPageState extends State<SignInPage> {
             ),
             TextFormField(
               decoration: const InputDecoration(
-                icon: Icon(Icons.vpn_key),
                 hintText: 'Confirm your password',
                 labelText: 'Confirm Password',
               ),

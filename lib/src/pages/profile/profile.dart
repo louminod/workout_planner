@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:workout_planner/src/models/fullUser.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
 
@@ -9,7 +7,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<FullUser>(context);
+    // var user = Provider.of<FullUser>(context);
     return Scaffold(
       drawer: CustomDrawer(),
       appBar: new AppBar(

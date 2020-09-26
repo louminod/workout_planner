@@ -17,14 +17,12 @@ class AuthenticationService {
     try {
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       User user = userCredential.user;
-
       try {
         await DatabaseService(userUid: user.uid).insertUserData(userData);
         await AuthenticationService().sendEmailVerificationLink();
       } catch (error) {
         print(error);
       }
-
       return user;
     } catch (error) {
       return error;

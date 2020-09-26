@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_planner/src/pages/connection/connection.dart';
 import 'package:workout_planner/src/pages/home.dart';
-import 'file:///C:/Users/louis/Documents/Developpement/FLUTTER/Workspace/workout_planner/lib/src/pages/profile/profile.dart';
+import 'package:workout_planner/src/pages/profile/profile.dart';
 import 'package:workout_planner/src/pages/workout/workout.dart';
 import 'package:workout_planner/src/routes/pageRoutes.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';

@@ -26,91 +26,98 @@ class _LoginPageState extends State<LoginPage> {
     return loading
         ? Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: 'Your mail address.',
-                      labelText: 'Email',
+            child: Container(
+              margin: EdgeInsets.only(top: 20, left: 30, right: 30),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: 'Your email address.',
+                        labelText: 'Email',
+                      ),
+                      validator: (String value) {
+                        return !value.contains('@') && !value.contains('.') ? "It's empty or not an email address." : null;
+                      },
+                      onChanged: (val) {
+                        setState(() => email = val);
+                      },
                     ),
-                    validator: (String value) {
-                      return !value.contains('@') ? "It's not a mail" : null;
-                    },
-                    onChanged: (val) {
-                      setState(() => email = val);
-                    },
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: 'Your password',
-                      labelText: 'Password',
+                    SizedBox(height: 20),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: 'Your password',
+                        labelText: 'Password',
+                      ),
+                      obscureText: true,
+                      validator: (String value) {
+                        return value == "" ? 'The password is empty.' : null;
+                      },
+                      onChanged: (val) {
+                        setState(() => password = val);
+                      },
                     ),
-                    obscureText: true,
-                    validator: (String value) {
-                      return value.length == 0 && value == ""
-                          ? 'The password is empty'
-                          : null;
-                    },
-                    onChanged: (val) {
-                      setState(() => password = val);
-                    },
-                  ),
-                  RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                    ),
-                    color: Colors.blueAccent,
-                    child: Text('Connexion'),
-                    onPressed: () async {
-                      if (_formKey.currentState.validate()) {
-                        setState(() {
-                          loading = true;
-                        });
-
-                        dynamic result = await AuthenticationService()
-                            .signInWithEmailAndPassword(
-                                email.replaceAll(' ', ''), password);
-
-                        if (result is FullUser) {
+                    SizedBox(height: 40),
+                    RaisedButton(
+                      color: Colors.black,
+                      child: Text('Connexion', style: TextStyle(color: Colors.white)),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
                           setState(() {
-                            loading = false;
+                            loading = true;
                           });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => App()),
-                          );
-                        } else {
-                          setState(() {
-                            error = result.message;
-                            loading = false;
-                          });
+
+                          dynamic result = await AuthenticationService().signInWithEmailAndPassword(email.replaceAll(' ', ''), password);
+
+                          if (result is FullUser) {
+                            setState(() {
+                              loading = false;
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => App()),
+                            );
+                          } else {
+                            setState(() {
+                              error = result.message;
+                              loading = false;
+                            });
+                          }
                         }
-                      }
-                    },
-                  ),
-                  Text(
-                    error,
-                    style: TextStyle(color: Colors.red, fontSize: 14.0),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        InkWell(
-                          child: Text("Sign In"),
-                          onTap: () => widget.toggleView(),
-                        ),
-                        InkWell(
-                          child: Text("Mot de passe oublié"),
-                          onTap: () {},
-                        ),
-                      ],
+                      },
                     ),
-                  ),
-                ],
+                    SizedBox(height: 40),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          InkWell(
+                            child: Text("Sign In"),
+                            onTap: () => widget.toggleView(),
+                          ),
+                          InkWell(
+                            child: Text("Mot de passe oublié"),
+                            onTap: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    error != ""
+                        ? Container(
+                            padding: EdgeInsets.all(10),
+                            color: Colors.red,
+                            child: Text(
+                              error,
+                              style: TextStyle(color: Colors.white, fontSize: 14.0),
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
               ),
             ),
           );

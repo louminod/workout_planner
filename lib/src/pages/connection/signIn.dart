@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';
 
+import '../../app.dart';
+
 class SignInPage extends StatefulWidget {
   final Function toggleView;
 
@@ -16,6 +18,7 @@ class _SignInPageState extends State<SignInPage> {
   String error = '';
   bool loading = false;
 
+  String name;
   String email = '';
   String password = '';
   String password2 = '';
@@ -23,102 +26,127 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                hintText: 'Your mail address.',
-                labelText: 'Email',
+      child: Container(
+        margin: EdgeInsets.only(top: 20, left: 30, right: 30),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Your name.',
+                  labelText: 'Name',
+                ),
+                validator: (String value) {
+                  return value == "" ? "Name is empty." : null;
+                },
+                onChanged: (val) {
+                  setState(() => name = val);
+                },
               ),
-              validator: (String value) {
-                return !value.contains('@') ? "It's not a mail" : null;
-              },
-              onChanged: (val) {
-                setState(() => email = val);
-              },
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                hintText: 'Your password',
-                labelText: 'Password',
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Your email address.',
+                  labelText: 'Email',
+                ),
+                validator: (String value) {
+                  return !value.contains('@') && !value.contains('.') ? "It's empty or not an email address." : null;
+                },
+                onChanged: (val) {
+                  setState(() => email = val);
+                },
               ),
-              obscureText: true,
-              validator: (String value) {
-                return value == "" ? 'The password is empty' : null;
-              },
-              onChanged: (val) {
-                setState(() => password = val);
-              },
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                hintText: 'Confirm your password',
-                labelText: 'Confirm Password',
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Your password',
+                  labelText: 'Password',
+                ),
+                obscureText: true,
+                validator: (String value) {
+                  return value == "" ? 'The password is empty.' : null;
+                },
+                onChanged: (val) {
+                  setState(() => password = val);
+                },
               ),
-              obscureText: true,
-              validator: (String value) {
-                return value == "" || value != password ? 'The password is empty or different' : null;
-              },
-              onChanged: (val) {
-                setState(() => password2 = val);
-              },
-            ),
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Confirm your password',
+                  labelText: 'Confirm Password',
+                ),
+                obscureText: true,
+                validator: (String value) {
+                  return value == "" || value != password ? 'The password is empty or not corresponding.' : null;
+                },
+                onChanged: (val) {
+                  setState(() => password2 = val);
+                },
               ),
-              color: Colors.blueAccent,
-              child: Text('Create'),
-              onPressed: () async {
-                if (_formKey.currentState.validate()) {
-                  setState(() {
-                    loading = true;
-                  });
-
-                  UserData userData = UserData();
-
-                  dynamic result = await AuthenticationService().createUserWithEmailAndPassword(userData, email.replaceAll(' ', ''), password);
-
-                  if (result is FullUser) {
+              SizedBox(height: 40),
+              RaisedButton(
+                color: Colors.black,
+                child: Text('Create', style: TextStyle(color: Colors.white)),
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
                     setState(() {
-                      loading = false;
+                      loading = true;
                     });
-                  } else {
-                    setState(() {
-                      error = result.message;
-                      loading = false;
-                    });
+
+                    UserData userData = UserData(name: this.name);
+
+                    dynamic result = await AuthenticationService().createUserWithEmailAndPassword(userData, email, password);
+
+                    if (result is FullUser) {
+                      setState(() {
+                        loading = false;
+                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => App()),
+                      );
+                    } else {
+                      setState(() {
+                        error = result.message;
+                        loading = false;
+                      });
+                    }
                   }
-
-                  setState(() {
-                    loading = false;
-                  });
-                }
-              },
-            ),
-            Text(
-              error,
-              style: TextStyle(color: Colors.red, fontSize: 14.0),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  InkWell(
-                    child: Text("Login"),
-                    onTap: () => widget.toggleView(),
-                  ),
-                  InkWell(
-                    child: Text("Mot de passe oublié"),
-                    onTap: () {},
-                  ),
-                ],
+                },
               ),
-            ),
-          ],
+              SizedBox(height: 40),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 40),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    InkWell(
+                      child: Text("Log In"),
+                      onTap: () => widget.toggleView(),
+                    ),
+                    InkWell(
+                      child: Text("Mot de passe oublié"),
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 30),
+              error != ""
+                  ? Container(
+                      padding: EdgeInsets.all(10),
+                      color: Colors.red,
+                      child: Text(
+                        error,
+                        style: TextStyle(color: Colors.white, fontSize: 14.0),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
         ),
       ),
     );

@@ -14,14 +14,25 @@ class DatabaseService {
 
   // USERS
   Stream<FullUser> get fullUser {
-    if (this.userUid != "") {
-      return AuthenticationService().userFirebase.asyncExpand((u) => _userData.map((uData) => FullUser(userFirebase: u, userData: uData)));
+    try {
+      if (this.userUid != "") {
+        return AuthenticationService().userFirebase.asyncExpand((u) => _userData.map((uData) => FullUser(userFirebase: u, userData: uData)));
+      } else {
+        return null;
+      }
+    } catch (error) {
+      print(error.toString());
+      return null;
     }
-    return null;
   }
 
   Stream<UserData> get _userData => _usersDataCollection.doc(userUid).snapshots().map((DocumentSnapshot userData) {
-        return UserData.fromJson(userData.id, userData.data());
+        try {
+          return UserData.fromJson(userData.id, userData.data());
+        } catch (error) {
+          print(error.toString());
+          return null;
+        }
       });
 
   Future<void> insertUserData(UserData userData) => _usersDataCollection.doc(userUid).set(userData.toJson());

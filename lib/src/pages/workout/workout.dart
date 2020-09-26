@@ -8,6 +8,7 @@ import 'package:workout_planner/src/models/workout.dart';
 import 'package:workout_planner/src/pages/connection/connection.dart';
 import 'package:workout_planner/src/pages/workout/references/workoutState.dart';
 import 'package:workout_planner/src/pages/workout/workoutCreate.dart';
+import 'package:workout_planner/src/pages/workout/workoutDetail.dart';
 import 'package:workout_planner/src/services/database_service.dart';
 import 'package:workout_planner/src/tools/converters.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
@@ -39,7 +40,7 @@ class WorkoutPage extends StatelessWidget {
                   userWorkouts = userWorkoutsSnapshot.data;
                   items = [];
                   userWorkouts.forEach((workout) {
-                    items.add(workoutCard(workout));
+                    items.add(workoutCard(workout, context, user));
                   });
                   return userWorkouts.length > 0
                       ? Container(
@@ -99,7 +100,7 @@ class WorkoutPage extends StatelessWidget {
     );
   }
 
-  TimelineModel workoutCard(Workout workout) {
+  TimelineModel workoutCard(Workout workout, BuildContext context, FullUser user) {
     Icon statusIcon;
 
     switch (workout.status) {
@@ -165,7 +166,7 @@ class WorkoutPage extends StatelessWidget {
                 lineHeight: 20.0,
                 animationDuration: 1000,
                 percent: workout.statusPercent / 100,
-                center: Text("${workout.statusPercent}.0%", style: TextStyle(color: Colors.white)),
+                center: Text("${workout.statusPercent}.0%", style: TextStyle(color: workout.statusPercent < 38 ? Colors.black : Colors.white)),
                 linearStrokeCap: LinearStrokeCap.roundAll,
                 progressColor: workout.statusPercent == 100 ? Colors.greenAccent : Colors.black,
               ),
@@ -176,8 +177,15 @@ class WorkoutPage extends StatelessWidget {
                 RaisedButton(
                   color: Colors.black,
                   elevation: 3,
-                  child: workout.statusPercent == 0 ? Text("RUN") : workout.statusPercent == 100 ? Text("FINISHED") : Text("CONTINUE"),
-                  onPressed: workout.statusPercent == 100 ? null : () {},
+                  child: workout.statusPercent == 0 ? Text("SEE") : workout.statusPercent == 100 ? Text("FINISHED") : Text("CONTINUE"),
+                  onPressed: workout.statusPercent == 100
+                      ? null
+                      : () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => WorkoutDetailPage(workout: workout, user: user)),
+                          );
+                        },
                 )
               ],
             ),

@@ -18,16 +18,9 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  String userUid;
-
-  @override
-  void initState() {
-    super.initState();
-    userUid = "";
-  }
-
   @override
   Widget build(BuildContext context) {
+    String userUid = "";
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

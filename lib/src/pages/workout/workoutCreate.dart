@@ -51,7 +51,7 @@ class _WorkoutCreatePageState extends State<WorkoutCreatePage> {
                   nbExercises: 10,
                   nbSeries: 4,
                   status: WorkoutStatus.CREATED,
-                  statusPercent: 0,
+                  statusPercent: 20,
                 );
                 try {
                   await DatabaseService(userUid: widget.user.userFirebase.uid).insertWorkout(workout);

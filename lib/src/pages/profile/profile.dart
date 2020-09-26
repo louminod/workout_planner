@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
 
+import '../../app.dart';
+
 class ProfilePage extends StatelessWidget {
   static const String routeName = '/profilePage';
 
@@ -15,15 +17,18 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: Colors.white,
         title: Text("LOUIS-MARIE", style: TextStyle(color: Colors.grey)),
         centerTitle: true,
-      ),
-      body: Center(
-        child: RaisedButton(
-          color: Colors.red,
-          child: Text("LOGOUT", style: TextStyle(color: Colors.white)),
-          onPressed: () async {
-            await AuthenticationService().signOut(context);
-          },
-        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app, color: Colors.red),
+            onPressed: () async {
+              await AuthenticationService().signOut();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => App()),
+              );
+            },
+          )
+        ],
       ),
     );
   }

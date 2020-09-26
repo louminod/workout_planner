@@ -1,9 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
 
-import '../app.dart';
 import 'database_service.dart';
 
 class AuthenticationService {
@@ -19,11 +16,11 @@ class AuthenticationService {
       User user = userCredential.user;
       try {
         await DatabaseService(userUid: user.uid).insertUserData(userData);
-        await AuthenticationService().sendEmailVerificationLink();
+        // await AuthenticationService().sendEmailVerificationLink();
       } catch (error) {
-        print(error);
+        return error;
       }
-      return user;
+      return FullUser(userFirebase: userCredential.user);
     } catch (error) {
       return error;
     }
@@ -42,11 +39,7 @@ class AuthenticationService {
     return _firebaseAuth.currentUser.sendEmailVerification();
   }
 
-  Future<void> signOut(BuildContext context) async {
+  Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => App()),
-    );
   }
 }

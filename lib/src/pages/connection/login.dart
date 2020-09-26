@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 40),
                     RaisedButton(
                       color: Colors.black,
-                      child: Text('Connexion', style: TextStyle(color: Colors.white)),
+                      child: Text('LOGIN', style: TextStyle(color: Colors.white)),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           setState(() {

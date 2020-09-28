@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:timeline_list/timeline.dart';
@@ -99,80 +101,151 @@ class WorkoutPage extends StatelessWidget {
     }
 
     return TimelineModel(
-      Card(
-        margin: EdgeInsets.symmetric(vertical: 20.0),
-        elevation: 3,
-        child: Column(
-          children: [
-            ListTile(
-              title: Text(workout.name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text(Converters.dateTimeToString(workout.date), style: TextStyle(color: Colors.grey)),
+      Slidable(
+        closeOnScroll: true,
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.25,
+        secondaryActions: <Widget>[
+          Container(
+            height: 320,
+            child: IconSlideAction(
+              caption: 'Reset',
+              color: Colors.white,
+              icon: Icons.loop,
+              onTap: () async {
+                workout.statusPercent = 0;
+                workout.status = WorkoutStatus.CREATED;
+                await DatabaseService(userUid: user.userFirebase.uid).updateWorkout(workout);
+                Fluttertoast.showToast(
+                    msg: "Workout updated",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.greenAccent,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              },
             ),
-            Divider(),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                padding: EdgeInsets.only(right: 10),
-                height: 27,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: ListView.builder(
-                    shrinkWrap: true,
+          ),
+          Container(
+            height: 320,
+            child: IconSlideAction(
+              caption: 'Complete',
+              color: Colors.white,
+              icon: Icons.check,
+              onTap: () async {
+                workout.statusPercent = 100;
+                workout.status = WorkoutStatus.FINISHED;
+                await DatabaseService(userUid: user.userFirebase.uid).updateWorkout(workout);
+                Fluttertoast.showToast(
+                    msg: "Workout updated",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.greenAccent,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              },
+            ),
+          ),
+          Container(
+            height: 320,
+            child: IconSlideAction(
+              caption: 'Delete',
+              color: Colors.white,
+              icon: Icons.delete,
+              onTap: () async {
+                await DatabaseService(userUid: user.userFirebase.uid).deleteWorkout(workout);
+                Fluttertoast.showToast(
+                    msg: "Workout deleted",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.redAccent,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              },
+            ),
+          ),
+        ],
+        child: Card(
+          margin: EdgeInsets.symmetric(vertical: 20.0),
+          elevation: 3,
+          child: Column(
+            children: [
+              ListTile(
+                title: Text(workout.name.toUpperCase(), style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(Converters.dateTimeToString(workout.date), style: TextStyle(color: Colors.grey)),
+              ),
+              Divider(),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: EdgeInsets.only(right: 10),
+                  height: 27,
+                  child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    itemCount: workout.categories.length,
-                    itemBuilder: (context, index) {
-                      return categoryItem(workout.categories[index].toString().split(".")[1]);
-                    },
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: workout.categories.length,
+                      itemBuilder: (context, index) {
+                        return categoryItem(workout.categories[index].toString().split(".")[1]);
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            Divider(),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-              alignment: Alignment.centerLeft,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("15:00", style: TextStyle(fontSize: 17, color: Colors.grey)),
-                  Text("${workout.nbExercises} exercices", style: TextStyle(fontSize: 17, color: Colors.grey)),
-                  Text("${workout.nbSeries} séries", style: TextStyle(fontSize: 17, color: Colors.grey)),
+              Divider(),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("15:00", style: TextStyle(fontSize: 17, color: Colors.grey)),
+                    Text("${workout.nbExercises} exercices", style: TextStyle(fontSize: 17, color: Colors.grey)),
+                    Text("${workout.nbSeries} séries", style: TextStyle(fontSize: 17, color: Colors.grey)),
+                  ],
+                ),
+              ),
+              Divider(),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                child: LinearPercentIndicator(
+                  animation: true,
+                  lineHeight: 20.0,
+                  animationDuration: 1000,
+                  percent: workout.statusPercent / 100,
+                  center: Text("${workout.statusPercent}.0%", style: TextStyle(color: workout.statusPercent < 38 ? Colors.black : Colors.white)),
+                  linearStrokeCap: LinearStrokeCap.roundAll,
+                  progressColor: workout.statusPercent == 100 ? Colors.greenAccent : Colors.black,
+                ),
+              ),
+              ButtonBar(
+                children: <Widget>[
+                  statusIcon,
+                  RaisedButton(
+                    color: Colors.black,
+                    elevation: 3,
+                    child: workout.statusPercent == 0 ? Text("SEE") : workout.statusPercent == 100 ? Text("FINISHED") : Text("CONTINUE"),
+                    onPressed: workout.statusPercent == 100
+                        ? null
+                        : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WorkoutDetailPage(workout: workout, user: user)),
+                      );
+                    },
+                  )
                 ],
               ),
-            ),
-            Divider(),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              child: LinearPercentIndicator(
-                animation: true,
-                lineHeight: 20.0,
-                animationDuration: 1000,
-                percent: workout.statusPercent / 100,
-                center: Text("${workout.statusPercent}.0%", style: TextStyle(color: workout.statusPercent < 38 ? Colors.black : Colors.white)),
-                linearStrokeCap: LinearStrokeCap.roundAll,
-                progressColor: workout.statusPercent == 100 ? Colors.greenAccent : Colors.black,
-              ),
-            ),
-            ButtonBar(
-              children: <Widget>[
-                statusIcon,
-                RaisedButton(
-                  color: Colors.black,
-                  elevation: 3,
-                  child: workout.statusPercent == 0 ? Text("SEE") : workout.statusPercent == 100 ? Text("FINISHED") : Text("CONTINUE"),
-                  onPressed: workout.statusPercent == 100
-                      ? null
-                      : () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => WorkoutDetailPage(workout: workout, user: user)),
-                          );
-                        },
-                )
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       position: TimelineItemPosition.right,

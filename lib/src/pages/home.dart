@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
+import 'package:workout_planner/src/routes/pageRoutes.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
 
 class HomePage extends StatelessWidget {
@@ -30,7 +31,46 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
+          Divider(),
+          Container(
+            height: 200,
+            child: ListView(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              children: <Widget>[
+                GestureDetector(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    width: 160.0,
+                    child: Card(
+                        elevation: 5,
+                        child: Center(
+                          child: Text("WORKOUTS"),
+                        )),
+                  ),
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, PageRoutes.workout);
+                  },
+                ),
+                GestureDetector(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    width: 160.0,
+                    child: Card(
+                        elevation: 5,
+                        child: Center(
+                          child: Text("ME"),
+                        )),
+                  ),
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, PageRoutes.profile);
+                  },
+                ),
+              ],
+            ),
+          ),
+          Divider(),
         ],
       ),
     );

@@ -6,6 +6,7 @@ import 'package:timeline_list/timeline_model.dart';
 import 'package:workout_planner/src/models/fullUser.dart';
 import 'package:workout_planner/src/models/workout.dart';
 import 'package:workout_planner/src/pages/connection/connection.dart';
+import 'package:workout_planner/src/components/pleaseLogin.dart';
 import 'package:workout_planner/src/pages/workout/references/workoutState.dart';
 import 'package:workout_planner/src/pages/workout/workoutCreate.dart';
 import 'package:workout_planner/src/pages/workout/workoutDetail.dart';
@@ -65,25 +66,7 @@ class WorkoutPage extends StatelessWidget {
                 }
               },
             )
-          : Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Please "),
-                  RaisedButton(
-                    child: Text("Login", style: TextStyle(color: Colors.white)),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ConnectionPage()),
-                      );
-                    },
-                    color: Colors.black,
-                  ),
-                  Text(" to show or create workouts."),
-                ],
-              ),
-            ),
+          : PleaseLoginComponent(text: "to show or create workouts."),
       floatingActionButton: user != null
           ? FloatingActionButton.extended(
               onPressed: () {

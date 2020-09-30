@@ -24,6 +24,7 @@ class HomePage extends StatelessWidget {
             margin: EdgeInsets.all(20),
             child: ListTile(
               title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("Welcome ", style: TextStyle(fontSize: 20)),
                   Text(user != null ? user.userData.name : "", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -46,7 +47,13 @@ class HomePage extends StatelessWidget {
                     child: Card(
                         elevation: 5,
                         child: Center(
-                          child: Text("WORKOUTS"),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Image.asset("assets/images/crossfit.png",width: 100),
+                              Text("WORKOUTS"),
+                            ],
+                          ),
                         )),
                   ),
                   onTap: () {
@@ -60,7 +67,13 @@ class HomePage extends StatelessWidget {
                     child: Card(
                         elevation: 5,
                         child: Center(
-                          child: Text("ME"),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Image.asset("assets/images/profile_icon.png",width: 100),
+                              Text("ME"),
+                            ],
+                          ),
                         )),
                   ),
                   onTap: () {

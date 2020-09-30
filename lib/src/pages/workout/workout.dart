@@ -13,6 +13,7 @@ import 'package:workout_planner/src/pages/workout/references/workoutState.dart';
 import 'package:workout_planner/src/pages/workout/workoutCreate.dart';
 import 'package:workout_planner/src/pages/workout/workoutDetail.dart';
 import 'package:workout_planner/src/services/database_service.dart';
+import 'package:workout_planner/src/tools/comparators.dart';
 import 'package:workout_planner/src/tools/converters.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
 
@@ -249,7 +250,7 @@ class WorkoutPage extends StatelessWidget {
         ),
       ),
       position: TimelineItemPosition.right,
-      iconBackground: Colors.black,
+      iconBackground: Comparators.dateAreEquals(workout.date, DateTime.now()) ? Colors.blue : Colors.black,
       icon: Icon(Icons.blur_on, color: Colors.white),
     );
   }

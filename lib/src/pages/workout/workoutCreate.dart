@@ -16,8 +16,18 @@ class WorkoutCreatePage extends StatefulWidget {
 }
 
 class _WorkoutCreatePageState extends State<WorkoutCreatePage> {
+  final _controller = ScrollController();
+
   bool loading = false;
   String errorMessage = "";
+
+  List lstExercises;
+
+  @override
+  void initState() {
+    super.initState();
+    lstExercises = [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +44,7 @@ class _WorkoutCreatePageState extends State<WorkoutCreatePage> {
                 ? Center(
                     child: Text(errorMessage, style: TextStyle(color: Colors.red)),
                   )
-                : null,
+                : workoutCreator(),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () async {
                 setState(() {
@@ -70,5 +80,87 @@ class _WorkoutCreatePageState extends State<WorkoutCreatePage> {
               backgroundColor: Colors.black,
             ),
           );
+  }
+
+  Widget workoutCreator() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        DragTarget(
+          builder: (context, List<String> candidateData, rejectedData) {
+            return Container(
+              height: 200,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.grey,
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: lstExercises.length,
+                controller: _controller,
+                padding: EdgeInsets.only(right: (MediaQuery.of(context).size.width / 2)),
+                itemBuilder: (BuildContext context, index) {
+                  return Card(
+                    margin: EdgeInsets.symmetric(vertical: 50, horizontal: 5),
+                    elevation: 3,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          lstExercises[index],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+          onWillAccept: (data) {
+            return true;
+          },
+          onAccept: (data) {
+            setState(() {
+              lstExercises.add(data);
+            });
+            _controller.animateTo(
+              _controller.position.maxScrollExtent,
+              duration: Duration(seconds: 1),
+              curve: Curves.fastOutSlowIn,
+            );
+          },
+        ),
+        SizedBox(height: 50),
+        Center(
+          child: Column(
+            children: [
+              Draggable(
+                data: 'push_up',
+                child: Card(
+                  elevation: 3,
+                  child: Image.asset("assets/gifs/push_up.gif", height: 150, width: 150),
+                ),
+                feedback: Card(
+                  elevation: 7,
+                  child: Image.asset("assets/gifs/push_up.gif", height: 130, width: 130),
+                ),
+                childWhenDragging: Container(),
+              ),
+              Draggable(
+                data: 'run',
+                child: Card(
+                  elevation: 3,
+                  child: Image.asset("assets/gifs/run.gif", height: 150, width: 150),
+                ),
+                feedback: Card(
+                  elevation: 7,
+                  child: Image.asset("assets/gifs/run.gif", height: 130, width: 130),
+                ),
+                childWhenDragging: Container(),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 }

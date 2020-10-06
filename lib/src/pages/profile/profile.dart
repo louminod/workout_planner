@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_planner/src/models/fullUser.dart';
-import 'package:workout_planner/src/pages/connection/connection.dart';
 import 'package:workout_planner/src/components/pleaseLogin.dart';
+import 'package:workout_planner/src/models/fullUser.dart';
 import 'package:workout_planner/src/services/authentication_service.dart';
 import 'package:workout_planner/src/widgets/customDrawer.dart';
 

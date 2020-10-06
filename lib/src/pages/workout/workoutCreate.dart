@@ -106,7 +106,8 @@ class _WorkoutCreatePageState extends State<WorkoutCreatePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          lstExercises[index],
+                          (lstExercises[index] as String).toUpperCase(),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ),
                     ),
@@ -134,7 +135,7 @@ class _WorkoutCreatePageState extends State<WorkoutCreatePage> {
           child: Column(
             children: [
               Draggable(
-                data: 'push_up',
+                data: 'push up',
                 child: Card(
                   elevation: 3,
                   child: Image.asset("assets/gifs/push_up.gif", height: 150, width: 150),
